@@ -25,9 +25,12 @@ module.exports = {
     purchaseToken:(req,res) =>{
         let privateKey = req.body.privateKey;
         const receipientAddress = req.body.receipientAddress;
+        const pubKey = web3.eth.accounts.privateKeyToAccount(privateKey);
+        console.log("Public Key ",pubKey)
+
         const amount = req.body.amount || 0;
         var functionParams = contract.methods.purchaseToken().encodeABI()
-        prepareTransactionBody(scConfig.config.contractAddress,receipientAddress,amount,functionParams).then(async(txdata)=>{
+        prepareTransactionBody(scConfig.config.contractAddress,pubKey.address,amount,functionParams).then(async(txdata)=>{
          signRawSignature(txdata,privateKey).then(data=>{
             return _handleResponse(req,res,null, data)
          }).catch(e=>{
